@@ -15,7 +15,7 @@ repository = "https://github.com/veeso/tui-realm-stdlib"
 
 [dependencies]
 textwrap = "^0.16"
-tuirealm = { version = "^1.9.0", default-features = false, features = [
+tuirealm = { git = "https://github.com/strowk/tui-realm.git", branch = "improvements", features = [
   "derive",
 ] }
 unicode-width = "^0.1.10"
@@ -24,7 +24,9 @@ unicode-width = "^0.1.10"
 crossterm = "^0.27"
 pretty_assertions = "1.2.1"
 rand = "0.8.5"
-tuirealm = "^1.8.0"
+tuirealm = { git = "https://github.com/strowk/tui-realm.git", branch = "improvements", features = [
+  "derive",
+] }
 
 [features]
 default = ["crossterm", "ratatui"]
