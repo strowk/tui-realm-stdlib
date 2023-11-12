@@ -267,7 +267,7 @@ impl Table {
                 let columns: usize =
                     match self.props.get(Attribute::Content).map(|x| x.unwrap_table()) {
                         Some(rows) => rows.iter().map(|col| col.len()).max().unwrap_or(0),
-                        _ => 0,
+                        _ => 0, // TODO: <- fix this bug, that can cause derive by zero for certain inputs
                     };
                 // Calc width in equal way
                 let width: u16 = (100 / columns) as u16;
