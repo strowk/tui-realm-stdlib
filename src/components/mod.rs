@@ -45,4 +45,5 @@ pub use span::Span;
 pub use sparkline::Sparkline;
 pub use spinner::Spinner;
 pub use table::Table;
+pub use table::WidthsUnit;
 pub use textarea::Textarea;

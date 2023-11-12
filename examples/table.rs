@@ -156,6 +156,7 @@ impl Default for TableAlfa {
                 .headers(&["Key", "Msg", "Description"])
                 .column_spacing(3)
                 .widths(&[30, 20, 50])
+                .widths_unit(tui_realm_stdlib::WidthsUnit::Percentage)
                 .table(
                     TableBuilder::default()
                         .add_col(TextSpan::from("KeyCode::Down"))

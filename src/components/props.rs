@@ -48,3 +48,4 @@ pub const LINE_GAUGE_STYLE_THICK: u8 = 3;
 // -- table
 
 pub const TABLE_COLUMN_SPACING: &str = "col-spacing";
+pub const TABLE_WIDTHS_UNIT: &str = "widths-unit";

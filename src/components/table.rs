@@ -2,6 +2,8 @@
 //!
 //! `Table` represents a read-only textual table component which can be scrollable through arrows or inactive
 
+use crate::props::TABLE_WIDTHS_UNIT;
+
 use super::props::TABLE_COLUMN_SPACING;
 
 use tuirealm::command::{Cmd, CmdResult, Direction, Position};
@@ -121,8 +123,20 @@ impl TableStates {
 pub struct Table {
     props: Props,
     pub states: TableStates,
+    widths_option: WidthsUnit,
     hg_str: Option<String>, // CRAP CRAP CRAP
     headers: Vec<String>,   // CRAP CRAP CRAP
+}
+
+pub enum WidthsUnit {
+    Percentage,
+    Length,
+}
+
+impl Default for WidthsUnit {
+    fn default() -> Self {
+        WidthsUnit::Percentage
+    }
 }
 
 impl Table {
@@ -192,6 +206,20 @@ impl Table {
         self
     }
 
+    pub fn widths_unit(mut self, option: WidthsUnit) -> Self {
+        self.attr(
+            Attribute::Custom(TABLE_WIDTHS_UNIT),
+            AttrValue::String(
+                match option {
+                    WidthsUnit::Percentage => "%",
+                    WidthsUnit::Length => "chars",
+                }
+                .to_string(),
+            ),
+        );
+        self
+    }
+
     pub fn widths(mut self, w: &[u16]) -> Self {
         self.attr(
             Attribute::Width,
@@ -250,6 +278,13 @@ impl Table {
             .unwrap_flag()
     }
 
+    fn constraint(&self, num: u16) -> Constraint {
+        match self.widths_option {
+            WidthsUnit::Percentage => Constraint::Percentage(num),
+            WidthsUnit::Length => Constraint::Length(num),
+        }
+    }
+
     /// ### layout
     ///
     /// Returns layout based on properties.
@@ -260,7 +295,7 @@ impl Table {
                 .iter()
                 .cloned()
                 .map(|x| x.unwrap_u16())
-                .map(Constraint::Percentage)
+                .map(|x| self.constraint(x))
                 .collect(),
             _ => {
                 // Get amount of columns (maximum len of row elements)
@@ -436,8 +471,18 @@ impl MockComponent for Table {
                 .map(|x| x.unwrap_payload().unwrap_one().unwrap_usize())
                 .unwrap_or(0);
             self.states.fix_list_index();
+        } else if matches!(attr, Attribute::Custom(TABLE_WIDTHS_UNIT)) {
+            self.widths_option = match self
+                .props
+                .get(Attribute::Custom(TABLE_WIDTHS_UNIT))
+                .map(|x| x.unwrap_string())
+            {
+                Some(s) if s == "chars" => WidthsUnit::Length,
+                Some(s) if s == "%" => WidthsUnit::Percentage,
+                _ => panic!("Invalid widths unit"),
+            };
         }
-    }
+    } 
 
     fn state(&self) -> State {
         match self.is_scrollable() {
